@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}修改文章{% endblock %}
+{% block lunbo %}{% endblock %}
+{% block content %}
+<script src="/static/tiny_mce/tiny_mce.js"></script>
+<h5 style="text-align: center ; color: red ;">{{msg}}</h5>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-7 col-md-offset-2">
+                <div>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="mima">
+                            <div class="panel panel-default zhuce1">
+
+                                <div class="panel-body">
+                                    <form class="form-horizontal" action="/article_update/{{article.id}}"
+                                          method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+
+                                            <div class="col-md-12">
+                                                <label for="pwd1">文章标题</label>
+                                                <input type="text" class="form-control"
+                                                       name="title" id="pwd1" value="{{article.title}}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="col-md-12">
+                                                <label for="pwd3">文章内容</label>
+                                                <textarea class="form-control" rows="15" id="pwd3" name="content">{{article.content|safe}}</textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-3 col-sm-offset-10">
+                                                <button type="submit" class="btn btn-primary  zhucebtn2">修改文章
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{# 配置页面富文本框 #}
+<script>
+    tinyMCE.init({
+        "mode": 'textareas',
+        'theme': 'advanced',
+        'width': 600,
+        'height': 500,
+    })
+</script>
+
+{% endblock %}

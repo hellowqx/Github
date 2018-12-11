@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block title %}修改个人资料{% endblock %}
+{% block lunbo %}{% endblock %}
+{% block content %}
+<h5 style="text-align: center ; color: red ;">{{msg}}</h5>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6 col-md-offset-2">
+                <div>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#info" aria-controls="home" role="tab"
+                                                                  data-toggle="tab">修改基本资料</a></li>
+                        <li role="presentation"><a href="#avatar" aria-controls="profile" role="tab"
+                                                   data-toggle="tab">修改头像</a></li>
+                        <li role="presentation"><a href="#mima" aria-controls="messages" role="tab"
+                                                   data-toggle="tab">修改密码</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="info">
+                            <div class="panel panel-default zhuce1">
+                                <div class="panel-body">
+                                    <form class="form-horizontal" action="{% url 'user:changeinfo' %}"
+                                          method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="inputusername1">用户名称</label>
+                                                <input type="text" class="form-control"
+                                                       name="name" id="inputusername1" value="{{request.session.loginuser.name}}" disabled>
+                                            </div>
+                                        </div>
+                                          <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="inputusername2">用户昵称</label>
+                                                <input type="text" class="form-control"
+                                                       name="nickname" id="inputusername2" value="{{request.session.loginuser.nickname}}" >
+                                            </div>
+                                        </div>
+
+                                         <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="inputusername3">用户年龄</label>
+                                                <input type="text" class="form-control"
+                                                       name="age" id="inputusername3" value="{{request.session.loginuser.age}}" >
+                                            </div>
+                                        </div>
+
+                                         <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="inputusername5">用户邮箱</label>
+                                                <input type="text" class="form-control"
+                                                       name="email" id="inputusername5" value="{{request.session.loginuser.email}}" >
+                                            </div>
+                                        </div>
+                                         <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="inputusername6">用户电话</label>
+                                                <input type="text" class="form-control"
+                                                       name="phone" id="inputusername6" value="{{request.session.loginuser.phone}}" >
+                                            </div>
+                                        </div>
+                                          <div class="form-group">
+
+                                            <div class="col-md-12">
+                                                <label for="inputusername4">用户性别</label>
+                                                {% if user.sex == '男'%}
+                                                <input type="radio" class=""
+                                                       name="sex" id="inputusername4" value="男" checked >男
+                                                <input type="radio" class=""
+                                                       name="sex" id="inputusername4" value="女" >女
+                                                {% else %}
+                                                <input type="radio" class=""
+                                                       name="sex" id="inputusername4" value="男" >男
+                                                <input type="radio" class=""
+                                                       name="sex" id="inputusername4" value="女" checked >女
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <button type="submit" class="btn btn-primary  zhucebtn2">提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane " id="avatar">
+                              <div class="panel panel-default zhuce1">
+
+                                <div class="panel-body">
+                                    <form class="form-horizontal" action="{% url 'user:changeavatar' %}"
+                                          method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <img src="/{{request.session.loginuser.avatar}}" alt="" style="width: 300px;height: 300px" id="img">
+                                            </div>
+                                        </div>
+                                        <div class="form-group ">
+                                            <div class="col-sm-10">
+                                                <input type="file" class="btn btn-primary " name="avatar">
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-10">
+                                                <button type="submit" class="btn btn-primary  zhucebtn2">提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane " id="mima">
+                            <div class="panel panel-default zhuce1">
+
+                                <div class="panel-body">
+                                    <form class="form-horizontal" action="{% url 'user:changepwd' %}"
+                                          method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="pwd1">旧密码</label>
+                                                <input type="password" class="form-control"
+                                                       name="oldpwd" id="pwd1" value="" >
+                                            </div>
+                                        </div>
+                                          <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="pwd2">新密码</label>
+                                                <input type="password" class="form-control"
+                                                       name="newpwd" id="pwd2" >
+                                            </div>
+                                        </div>
+
+                                         <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="pwd3">确认密码</label>
+                                                <input type="password" class="form-control"
+                                                       name="confirm" id="pwd3" >
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <button type="submit" class="btn btn-primary  zhucebtn2">提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

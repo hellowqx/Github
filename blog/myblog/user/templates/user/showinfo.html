@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}展示个人资料{% endblock %}
+{% block lunbo %}{% endblock %}
+
+{% block content %}
+<h5 style="text-align: center ; color: red ;">{{msg}}</h5>
+<div class="container-fluid">
+  <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-5">
+            <ul class="list-group" style="text-align:center">
+                <li class="list-group-item" style="">
+                    <img src="/{{request.session.loginuser.avatar}}" alt="用户头像" class="img-circle avatar" width="200px" height="200px">
+                </li>
+                <li class="list-group-item " style="" >
+                    用户标识：{{request.session.loginuser.id}}
+                </li>
+                <li class="list-group-item" style=" ">
+                    用户名称：{{request.session.loginuser.name}}
+                </li>
+                 <li class="list-group-item" style=" ">
+                    用户昵称：{{request.session.loginuser.nickname}}
+                </li>
+                <li class="list-group-item" style=" ">
+                    用户性别：{{request.session.loginuser.sex}}
+                </li>
+                <li class="list-group-item" style=" ">
+                    用户年龄：{{request.session.loginuser.age}}
+                <li class="list-group-item" style=" ">
+                    用户邮箱：{{request.session.loginuser.email}}
+                </li>
+                 <li class="list-group-item" style=" ">
+                    用户电话：{{request.session.loginuser.phone}}
+                </li>
+            </ul>
+        </div>
+
+  </div>
+</div>
+
+
+
+
+{% endblock%}
