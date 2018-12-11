@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'tinymce',
+    'haystack',
+
 ]
 
 MIDDLEWARE = [
@@ -130,6 +132,8 @@ STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'static')
 ]
 
+LOGIN_URL = '/login/'
+
 #Json
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
@@ -158,3 +162,20 @@ TINYMCE_DEFAULT_CONFIG = {
 'width': 600,
 'height': 500,
 }
+
+
+#全文检索
+HAYSTACK_CONNECTIONS = {
+'default': {
+'ENGINE': 'user.whoosh_cn_backend.WhooshEngine', # 将来需要修改
+'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+}
+}
+
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
+#索引生成设置
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+
+#分页
+PAGESIZE = 3

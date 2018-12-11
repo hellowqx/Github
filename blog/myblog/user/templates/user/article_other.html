@@ -1,6 +1,8 @@
 {% extends 'base.html'%}
 {% block left %}{% endblock %}
 {% block right %}{% endblock %}
+{% block lunbo %}{% endblock %}
+
 {% block mid %}
 <h5 style="text-align: center ; color: red ;">{{msg}}</h5>
 <div class="container-fluid">
@@ -19,7 +21,7 @@
             <tr>
                 <td>{{i.id}}</td>
                 <td><a href="{% url 'user:article_show' i.id%}">{{i.title|truncatechars:20|safe}}</a></td>
-                <td>{{i.content|truncatechars:30|safe}}</td>
+                <td>{{i.content|truncatechars:50|safe}}</td>
                 <td>{{i.publishtime}}</td>
                 <td>{{i.count}}</td>
             </tr>

@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}修改文章{% endblock %}
 {% block lunbo %}{% endblock %}
+{% block left %}{% endblock %}
+{% block mid %}{% endblock %}
+{% block right %}{% endblock %}
+
 {% block content %}
 <script src="/static/tiny_mce/tiny_mce.js"></script>
 <h5 style="text-align: center ; color: red ;">{{msg}}</h5>
@@ -14,7 +18,7 @@
                             <div class="panel panel-default zhuce1">
 
                                 <div class="panel-body">
-                                    <form class="form-horizontal" action="/article_update/{{article.id}}"
+                                    <form class="form-horizontal" action="/article_update/{{article.id}}/"
                                           method="post">
                                         {% csrf_token %}
                                         <div class="form-group">

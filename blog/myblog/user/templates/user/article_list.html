@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}展示个人所有文章{% endblock %}
 {% block lunbo %}{% endblock %}
+{% block left %}{% endblock %}
+{% block mid %}{% endblock %}
+{% block right %}{% endblock %}
+
 
 {% block content %}
 <h5 style="text-align: center ; color: red ;">{{msg}}</h5>
@@ -18,20 +22,20 @@
                   <td>删除</td>
 
               </tr>
-              {% for i in articles %}
+                {% for i in articles %}
             <tr>
                 <td>{{i.id}}</td>
                 <td><a href="{% url 'user:article_show' i.id%}">{{i.title|truncatechars:20|safe}}</a></td>
-                <td>{{i.content|truncatechars:30|safe}}</td>
+                <td>{{i.content|truncatechars:50|safe}}</td>
                 <td>{{i.publishtime}}</td>
                 <td>{{i.count}}</td>
                 <td><a href="{% url 'user:article_update' i.id %}">修改文章</a> </td>
                 <td><a href="{% url 'user:article_del' i.id %}">删除文章</a> </td>
             </tr>
               {% empty%}
-              <tr>
+                <tr>
                 <td>没有文章,<a href="{% url 'user:article_add' %}">快去发表文章</a></td>
-            </tr>
+                </tr>
               {% endfor %}
           </table>
       </div>

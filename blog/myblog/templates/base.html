@@ -4,14 +4,24 @@
     <meta charset="UTF-8">
     {% load static %}
     <title>{% block title %}项目首页{% endblock %}</title>
-
-
     <link rel="stylesheet" href="{% static '/user/js/lib/bootstrap-3.3.7-dist/css/bootstrap.css' %}">
     <script src="{% static '/user/js/lib/jquery/jquery-1.12.4.js' %}"></script>
     <script src="{% static '/user/js/lib/bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
     <link rel="stylesheet" href="{%static '/user/js/app/base.css'%}">
+    <style>
+        #aaa {
+            border: solid 1px rosybrown;
+        }
 
-
+        #aaa p a, #aaa p a:link, #aaa p a:visited {
+            width: 100%;
+            height: 100%;
+            display: block;
+            font-size: 14px;
+            color: #707070;
+            margin-bottom: 1px;
+        }
+    </style>
 </head>
 <body>
 {% block daohang %}
@@ -24,7 +34,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 {% if request.session.loginuser %}
-                <li class="active"><a href="#">{{request.session.loginuser.name}},欢迎您登录博客</a></li>
+                <li class="active"><a href="#">{{request.session.loginuser.name}}，欢迎您登录博客</a></li>
                 <li><a href="{% url 'user:register' %}">注册</a></li>
                 <li><a href="{% url 'user:logout' %}">退出登录</a></li>
                 {% else %}
@@ -32,9 +42,9 @@
                 <li><a href="{% url 'user:register'%}">注册</a></li>
                 {% endif %}
             </ul>
-            <form class="navbar-form navbar-left">
+            <form class="navbar-form navbar-left" action="/search/" method="get">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="输入查询内容">
+                    <input type="text" name="q" class="form-control" placeholder="输入查询内容">
                 </div>
                 <button type="submit" class="btn btn-default">搜索</button>
             </form>
@@ -50,7 +60,7 @@
                         <li><a href="{% url 'user:changeinfo' %}">修改个人信息</a></li>
                         {% if request.session.loginuser.name == 'wqx' %}
                         <li><a href="/admin/">后台管理</a></li>
-                        <li><a href="/admin/">超级管理员</a></li>
+
                         {% endif %}
                         <li role="separator" class="divider"></li>
                         <li><a href="{% url 'user:article_add' %}">发表文章</a></li>
@@ -107,31 +117,93 @@
         <span class="sr-only">Next</span>
     </a>
 </div>
-
+{% endblock %}
 
 {# 中间 内容 部分 ————————————————————————————————————————————————————————#}
 
 <div class="container">
     <div class="row">
         {% block left %}
-        <div class=" col-md-2 col-md-offset-1"  style="margin-top: 50px">信息</div>
+        <div class=" col-md-2 " style="margin-top: 50px">
+            <ul id="aaa">
+                <p class="active">文章推荐<a href="/"></a></p>
+                <p class=""><a href="/nav/newarticles">最新文章</a></p>
+                <p class=""><a href="/nav/watchers">关注</a></p>
+                <p class=""><a href="/nav/news">资讯</a></p>
+                <p class=""><a href="/nav/ai">人工智能</a></p>
+                <p class=""><a href="/nav/cloud">云计算/大数据</a></p>
+                <p class=""><a href="https://blockchain.csdn.net">区块链</a></p>
+                <p class=""><a href="/nav/db">数据库</a></p>
+                <p class=""><a href="/nav/career">程序人生</a></p>
+                <p class=""><a href="/nav/game">游戏开发</a></p>
+                <p class=""><a href="/nav/engineering">研发管理</a></p>
+                <p class=""><a href="/nav/web">前端</a></p>
+                <p class=""><a href="/nav/mobile">移动开发</a></p>
+                <p class=""><a href="/nav/iot">物联网</a></p>
+                <p class=""><a href="/nav/ops">运维</a></p>
+                <p class=""><a href="/nav/fund">计算机基础</a></p>
+                <p class=""><a href="/nav/lang">编程语言</a></p>
+                <p class=""><a href="/nav/arch">架构</a></p>
+                <p class=""><a href="/nav/avi">音视频开发</a></p>
+                <p class=""><a href="/nav/sec">安全</a></p>
+                <p class=""><a href="/nav/other">其他</a></p>
+            </ul>
+
+        </div>
         {% endblock %}
         {% block mid %}
-        <div class="col-md-7"  style="margin-top: 50px">
-            <ul >
-                {% for article in articles %}
-                <li style="font-size:x-large"><a href="{% url 'user:article_show' article.id%}">{{article.title|truncatechars:20|safe}}</a></li>
+        <div class="col-md-6 col-md-offset-1" style="margin-top: 50px">
+            <ul>
+                {% for article in page.object_list %}
+                <li style="font-size:x-large"><a href="{% url 'user:article_show' article.id%}">{{article.title|truncatechars:20|safe}}</a>
+                </li>
                 <br>
-                <li>{{article.content|truncatechars:40|safe}}----------------- <a href="{% url 'user:article_other' article.auth.id %}">作者：{{article.auth}}</a></li>
+                <li>{{article.content|truncatechars:100|safe}}
+                    <span><a href="{% url 'user:article_other' article.auth.id %}">作者：{{article.auth}}</a></span>
+                </li>
+
                 <hr>
                 {% endfor %}
             </ul>
+            <nav aria-label="Page navigation" style="text-align: center">
+                <ul class="pagination">
+                    <li>
+                        <a href="/?pageNow=1" aria-label="Previous">
+                            <span aria-hidden="true">首页</span>
+                        </a>
+                    </li>
+                    {% if page.has_previous %}
+                    <li>
+                        <a href="/?pageNow={{page.previous_page_number}}" aria-label="Next">
+                            <span aria-hidden="true">上一页</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% for i in page.paginator.page_range%}
+                    <li><a href="/?pageNow={{i}}">{{i}}</a></li>
+                    {% endfor %}
+                    {% if page.has_next %}
+                    <li>
+                        <a href="/?pageNow={{page.next_page_number}}" aria-label="Next">
+                            <span aria-hidden="true">下一页</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="/?pageNow={{page.paginator.num_pages}}" aria-label="Next">
+                            <span aria-hidden="true">尾页</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
+
+
         {% endblock %}
         {% block right %}
-        <div class="col-md-2" style="margin-top: 50px">
+        <div class="col-md-2 col-md-offset-1" style="margin-top: 50px">
             <ul>
-                <li style="font-size: 18px">热门作者</li>
+                <li style="font-size: 18px ;color: #b92c28">热门作者</li>
                 {% for i in sethot %}
                 <li><a href="{% url 'user:article_other' i.id %}" style="font-size: large">{{i.name}}</a></li>
                 {% endfor %}
@@ -140,7 +212,7 @@
         {% endblock %}
     </div>
 </div>
-{% endblock %}
+
 
 {% block content %}{% endblock %}
 </body>

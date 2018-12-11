@@ -41,7 +41,7 @@ def create_code():
     for t in range(4):
         draw.text((30 * t + 5, 0), code[t], getRandomColor(), font)
     # 生成干扰点
-    for _ in range(random.randint(0, 50)):
+    for _ in range(random.randint(0, 300)):
     # 位置，颜色
         draw.point((random.randint(0, 120),
                 random.randint(0, 30)), fill=getRandomColor())

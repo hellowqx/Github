@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}搜索结果{% endblock %}
+{% block lunbo %}{% endblock %}
+
+{% block left %}{% endblock %}
+{% block right %}{% endblock %}
+
+{% block mid %}
+<div class="container">
+    <div class="row">
+        <div class=" col-md-6 col-md-offset-3 " style="margin-top: 50px">
+            {% if query %}
+            <h3>搜索结果如下：</h3>
+            {% for result in page.object_list %}
+
+                <p>
+                    <span style="margin-right:200px "><a href="/article_show/{{ result.object.id }}/">{{ result.object.title }} </a> </span>
+                    <span>作者：<a href="/article_other/{{ result.object.auth_id }}/">【{{ result.object.auth }}</a>】</span>
+                </p>
+
+
+
+
+
+
+            {% empty %}
+            <p>啥也没找到</p>
+            {% endfor %}
+            {% if page.has_previous or page.has_next %}
+            <div>
+                {% if page.has_previous %}
+                <a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">
+                    {% endif %}
+                    &laquo; 上一页
+                    {% if page.has_previous %}
+                </a>
+                {% endif %}
+                |
+                {% if page.has_next %}
+                <a href="?q={{ query }}&amp;page={{ page.next_page_number }}">
+                    {% endif %}
+                    下一页 &raquo;
+                    {% if page.has_next %}
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
