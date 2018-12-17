@@ -21,7 +21,6 @@
                                             <label for="pwd1">文章详情</label>
                                             <hr>
                                             <h2 style="text-align: center ">{{at.title}}</h2>
-
                                             <h5 style="text-align: right">
                                                 作者昵称：{{at.auth.nickname}}
                                                 发表时间：{{at.publishtime}}
@@ -36,6 +35,29 @@
                                             <h4>{{at.content|safe}}</h4>
                                         </div>
                                     </div>
+                                    -------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                    <h4>文章评论</h4>
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            {% for i in pinglun %}
+                                            <h4>{{i.content}}</h4>
+                                            {% empty %}
+                                            <p>没有评论</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <hr>
+                                     <div class="form-group">
+                                        <div class="col-md-10">
+                                            <h4><a href="#" onclick="pinglun()">我要评论</a></h4>
+                                        </div>
+                                         <form action="#" id="aaa" style="display: none;" method="post">
+                                             {% csrf_token %}
+                                             <input type="text" name="pinglun" >
+                                             <input type="hidden" name="a_id" value="{{at.id}}">
+                                             <input type="submit" value="发表" >
+                                         </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -45,6 +67,11 @@
         </div>
     </div>
 </div>
+<script>
+    function pinglun() {
+        $('#aaa').toggle()
 
+    }
+</script>
 
 {% endblock %}

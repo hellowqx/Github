@@ -9,25 +9,30 @@ from io import BytesIO
 from django.core.cache import cache
 from . import utils
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
-#检查用户
+from django.http import JsonResponse
+
+
+
+# 检查用户
 # from django.contrib.auth import authenticate,login,logout
 # 分页插件在 core 包中
 from django.core.paginator import Paginator
 # 导入 setting 配置文件
 from django.conf import settings
+from django.core.mail import send_mail
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 # 主页
 def index(request):
-    #当前页
-    pageNow=int(request.GET.get('pageNow',1))
+    # 当前页
+    pageNow = int(request.GET.get('pageNow', 1))
     # 展示所有文章
     articles = utils.cache_allarticle()
-    pagesize=settings.PAGESIZE
+    pagesize = settings.PAGESIZE
     # 文章按点击量排序 排名前100
-    paginator=Paginator(articles,pagesize)
-    page=paginator.page(pageNow)
+    paginator = Paginator(articles, pagesize)
+    page = paginator.page(pageNow)
     hotpeoples = models.Article.objects.filter().order_by('-count')[:100]
     sethot = set()
     # 讲文章的作者添加到set
@@ -100,16 +105,18 @@ def login(request):
                 return render(request, 'user/login.html', {'msg': '验证码不能为空'})
 
         # 判断用户
-        #这种方式检测密码 跟 自己写的加密方式不同 不能判断用户
+        # 这种方式检测密码 跟 自己写的加密方式不同 不能判断用户
         # user1 = authenticate(name=name, pwd=pwd)
-        user = models.User.objects.filter(name=name)
-        if len(user) == 0:
+        user = models.User.objects.get(name=name)
+        if user is None :
             return render(request, 'user/login.html', {'msg': '用户名不存在'})
         # 判断密码
         # if user[0].pwd == hash_256(pwd):
-        if user[0].pwd == hash_256(pwd):
+        if user.pwd == hash_256(pwd):
             # 跳转到首页
-            request.session['loginuser'] = user[0]
+            print(next_url)
+            # login(request,user)
+            request.session['loginuser'] = user
             return redirect(next_url)
 
             # 向url传参数
@@ -120,10 +127,8 @@ def login(request):
             return render(request, 'user/login.html', {'msg': '用户名或密码错误'})
 
 
-
-
 # 展示个人信息
-
+@login_required
 def showinfo(request):
     user = request.session['loginuser']
     return render(request, 'user/showinfo.html', {'user': user})
@@ -221,7 +226,6 @@ def changepwd(request):
 
 
 # 用户退出
-
 def logout(request):
     del request.session['loginuser']
     return redirect('/login/')
@@ -296,7 +300,6 @@ def article_del(request, a_id):
     # return render(request,'user/article_list.html',{'msg':'文章删除成功'})
 
 
-
 # 展示别人所有文章
 def article_other(request, u_id):
     user = models.User.objects.get(pk=u_id)
@@ -319,10 +322,22 @@ def article_show(request, a_id):
     # 文章点击量
     at.count += 1
     at.save()
-
+    print(a_id,111111111)
+    user = request.session['loginuser']
+    pl = models.Judge.objects.filter(article_id=a_id)
+    print(pl,222222222222222222222)
+    #文章评论
+    if request.method == 'GET':
+        return render(request, 'user/article_show.html', {'pinglun': pl,'at':at})
+    elif request.method == 'POST':
+        ps = request.POST['pinglun'].strip()
+        if ps == '':
+            return render(request,'user/article.html',{'msg1':'评论为空--'})
+        pinglun = models.Judge(content=ps, article=at, user=user)
+        pinglun.save()
     utils.cache_article(request, ischange=True)
-
-    return render(request, 'user/article_show.html', {'at': at})
+    pls = models.Judge.objects.filter(article_id=a_id)
+    return render(request, 'user/article_show.html', {'at': at,'pinglun':pls})
 
 
 # 获取验证码
@@ -334,5 +349,108 @@ def get_code(request):
     return HttpResponse(f.getvalue())
 
 
+# 邮箱注册
+def reg_email(request):
+    if request.method == "GET":
+        return render(request, "user/register.html", {})
+    else:
+        email = request.POST["email"].strip()
+        password = request.POST.get("pwd").strip()
+        confirmpwd = request.POST.get("confirm").strip()
+    # 数据校验
+    if len(email) < 1:
+        return render(request, "user/register.html", {"msg": "用户邮箱为空！！"})
+    if len(password) < 4:
+        return render(request, "user/register.html", {"msg": "长度小于 4 位！！"})
+    if password != confirmpwd:
+        return render(request, "user/register.html", {"msg": "两次密码不一致！！"})
+    try:
+        user = models.User.objects.get(name=email)
+        return render(request, "user/register.html", {"msg": "名称已经存在"})
+    except:
+        password = utils.hash_256(password)
+        user = models.User(name=email, pwd=password, nickname=email, email=email)
+    try:
+        user.save()
+        try:
+            # 保存成功，发送邮件
+            m_title = "wqx测试电商账号激活邮件"
+            m_msg = "点击激活您的账号"
+            # 调用 JWT 来加密和解密需要的数据
+            serializer = Serializer(settings.SECRET_KEY, expires_in=3600)
+            code = serializer.dumps({"confirm": user.id}).decode("utf-8")
+            href = "http://ww.ljh.com/blog/active/" + code + "/"
+            m_html = '<a href="' + href + '" target="_blank">马上点击激活，一个小时内有效</a>'
+            send_mail(m_title, m_msg, settings.EMAIL_FROM, [email], html_message=m_html)
+            return render(request, "user/login.html", {"msg": "恭喜您，注册成功，请登录邮箱激活账号！！"})
+        except Exception as e:
+            print(e,111111111111111)
+            return render(request, "user/login.html", {"msg": "恭喜您，注册成功，邮箱发送失败，请点击重新发送"})
+    except Exception as e:
+        return render(request, "user/register.html", {"msg": "注册失败，请重新注册，或者联系管理员"})
+
+
+def active(request, token):
+    serializer = Serializer(settings.SECRET_KEY, 3600)
+    try:
+        info = serializer.loads(token)
+        active_id = info["confirm"]
+        user = models.User.objects.get(pk=active_id)
+        user.is_active = True
+        user.save()
+        return render(request, "user/login.html", {"msg": "恭喜您，激活账号成功，请登录！！"})
+    except Exception as e:
+        return HttpResponse("激活失败")
+#
+from django.views.decorators.csrf import csrf_exempt
+from django.forms.models import model_to_dict
+@csrf_exempt
+def test1(request):
+    if request.method=='GET':
+        return render(request,'user/testajax.html',)
+    if request.method=='POST':
+        data=dict()
+        data['msg']={'name':'wqx','age':18}
+        return JsonResponse(data)
+
+
+from django.core.serializers import serialize,deserialize
+@csrf_exempt
+def test(request):
+    if request.method=='GET':
+
+        return render(request,'user/testajax.html',)
+    if request.method=='POST':
+        id = request.POST['id']
+        print(id,3333333333333333333333)
+        users=models.Article.objects.all()
+        users=serialize('json',users,fields=('title','content'))
+        return HttpResponse(users)
+        # return JsonResponse(users,safe=False)
+
+        # serialize('json',users,fields=('name','nickname'))
+
+
+
+
+#ajax 检查名字
+def checkname(request):
+    name=request.GET['name'].strip()
+    try:
+        user=models.User.objects.get(name=name)
+        print(user,000000000000000)
+        return JsonResponse({'msg':'该账号已存在,请更换 ','success':False})
+    except:
+        return JsonResponse( {'msg': '该账号可用','success':True})
+
+
+#ajax 检查名字
+def checkemail(request):
+    email=request.GET['email'].strip()
+    try:
+        user=models.User.objects.get(name=email)
+        return JsonResponse({'msg':'该账号已存在,请更换 ','success':False})
+    except:
+        return JsonResponse( {'msg': '该账号可用','success':True})
 
 

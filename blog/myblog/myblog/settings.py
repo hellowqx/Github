@@ -12,11 +12,11 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import pymysql
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -28,7 +28,6 @@ SECRET_KEY = 'lo%8p%^5y@-8v58y-hce$^3%*81bzw_asu807)u7is7h^whigf'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -75,7 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myblog.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -83,13 +81,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'myblog',
-        'USER':'root',
-        'PORT':3306,
-        'PASSWORD':'root',
-        'CHARSET':'utf8'
+        'USER': 'root',
+        'PORT': 3306,
+        'PASSWORD': 'root',
+        'CHARSET': 'utf8'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -109,7 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -123,22 +119,20 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS=[
-    os.path.join(BASE_DIR,'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
 ]
 
 LOGIN_URL = '/login/'
 
-#Json
+# Json
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-
-#django-redis配置
+# django-redis配置
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -149,33 +143,44 @@ CACHES = {
     }
 }
 
-
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
-
 
 # tinymce 的配置项  富文本框
 TINYMCE_JS_URL = "/static/tiny_mce/tiny_mce.js"
 TINYMCE_JS_ROOT = "/static/tiny_mce/"
 TINYMCE_DEFAULT_CONFIG = {
-'theme': "advanced",
-'width': 600,
-'height': 500,
+    'theme': "advanced",
+    'width': 600,
+    'height': 500,
 }
 
-
-#全文检索
+# 全文检索
 HAYSTACK_CONNECTIONS = {
-'default': {
-'ENGINE': 'user.whoosh_cn_backend.WhooshEngine', # 将来需要修改
-'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
-}
+    'default': {
+        'ENGINE': 'user.whoosh_cn_backend.WhooshEngine',  # 将来需要修改
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
 }
 
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
-#索引生成设置
+# 索引生成设置
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
-
-#分页
+# 分页
 PAGESIZE = 3
+
+#邮箱注册
+# qq IMAP/SMTP 配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 25 # 或者 465/587 是设置了 SSL 加密方式
+# 发送邮件的邮箱
+EMAIL_HOST_USER = '741599771@qq.com'
+# 在邮箱中设置的客户端授权密码
+# 如果重新设置了新的授权码,直接使用最新的授权码即可
+EMAIL_HOST_PASSWORD = 'ovtrvillkwoubbjf'
+# 这里必须是 True，否则发送不成功
+EMAIL_USE_TLS = True
+# 收件人看到的发件人, 必须是一直且有效的
+EMAIL_FROM = '测试邮件注册<741599771@qq.com>'

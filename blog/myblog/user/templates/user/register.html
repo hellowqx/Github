@@ -1,21 +1,27 @@
 {% extends 'base.html' %}
-{% block title %}修改个人资料{% endblock %}
+{% block title %}注册{% endblock %}
 {% block lunbo %}{% endblock %}
 {% block left %}{% endblock %}
 {% block mid %}{% endblock %}
 {% block right %}{% endblock %}
 
 {% block content %}
-<h5 style="text-align: center ; color: red ;">{{msg}}</h5>
+<h5 style="text-align: center ; color: red ;" id="msg">{{msg}}</h5>
 <div class="container">
     <div class="row">
         <div class="col-md-12">
             <div class="col-md-6 col-md-offset-2">
                 <div>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#info" aria-controls="home"
+                                                                  role="tab"
+                                                                  data-toggle="tab">普通注册</a></li>
+                        <li role="presentation"><a href="#emails" aria-controls="profile" role="tab"
+                                                   data-toggle="tab">邮箱注册</a></li>
+                    </ul>
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="mima">
+                        <div role="tabpanel" class="tab-pane active" id="info">
                             <div class="panel panel-default zhuce1">
-
                                 <div class="panel-body">
                                     <form class="form-horizontal" action="{% url 'user:register' %}"
                                           method="post">
@@ -23,9 +29,9 @@
                                         <div class="form-group">
 
                                             <div class="col-md-10">
-                                                <label for="pwd1">用户登录名</label>
+                                                <label for="name">用户登录名</label>
                                                 <input type="text" class="form-control"
-                                                       name="name" id="pwd1" placeholder="请输入用户名">
+                                                       name="name" id="name" placeholder="请输入用户名">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -47,14 +53,58 @@
                                         <div class="form-group">
                                             <div class="col-md-10">
                                                 <label for="pwd22">验证码</label>
-                                                <input type="text" name="code" id="pwd22" class="form-control" autocomplete="off">
+                                                <input type="text" name="code" id="pwd22" class="form-control"
+                                                       autocomplete="off">
                                                 <img src="/get_code/" alt="" onclick="get_code(this)">
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <div class="col-sm-12">
-                                                <button type="submit" class="btn btn-primary  zhucebtn2">提交
+                                                <button type="submit" id="btn" class="btn btn-primary  zhucebtn2">注册
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane " id="emails">
+                            <div class="panel panel-default zhuce1">
+                                <div class="panel-body">
+                                    <form class="form-horizontal" action="{% url 'user:reg_email' %}"
+                                          method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="pwd1">用户邮箱</label>
+                                                <input type="text" class="form-control"
+                                                       name="email" id="email" placeholder="请输入邮箱">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="col-md-10">
+                                                <label for="pwd2">用户密码</label>
+                                                <input type="password" class="form-control"
+                                                       name="pwd" id="pwd2" placeholder="请输入密码">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-md-10">
+                                                <label for="pwd3">确认密码</label>
+                                                <input type="password" class="form-control"
+                                                       name="confirm" id="pwd3" placeholder="确认密码">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <button type="submit" id="btn2"
+                                                        class="btn btn-primary  zhucebtn2">注册
                                                 </button>
                                             </div>
                                         </div>
@@ -69,15 +119,69 @@
     </div>
 </div>
 <script>
-    function get_code(codes){
-        codes.src='/get_code/?id='+Math.random()
+    function get_code(codes) {
+        codes.src = '/get_code/?id=' + Math.random();
     }
 
 
-    function get_code1(){
-            img=document.getElementById('code')
-            img.src='/codes/?id='+ Math.random()
-        }
-</script>
+    function get_code1() {
+        img = document.getElementById('code');
+        img.src = '/codes/?id=' + Math.random();
+    }
 
+
+    $(function () {
+
+        $('#name').on('blur', function () {
+            name1 = $(this).val();
+            if (name1.trim() == '') {
+                $('#msg').text('用户名不能为空');
+                return;
+            }
+            $.ajax({
+                url: '/checkname/',
+                data: {'name': name1},
+                dataType: 'JSON',
+                type: 'GET',
+                success: function (data) {
+                    if (data.success) {
+                        $('#msg').text(data.msg);
+                        $('#btn').show()
+                    }
+                    else {
+                        $('#msg').text(data.msg);
+                        $('#btn').hide()
+                    }
+                }
+            })
+        })
+    })
+</script>
+<script>
+    $(function () {
+        $('#email').on('blur', function () {
+            email = $(this).val();
+            if (email <= 7) {
+                $('#msg').text('邮箱格式错误')
+                return;
+            }
+            $.ajax({
+                url: /checkemail/,
+                dataType: 'JSON',
+                data: {'email': email},
+                type: 'GET',
+                success: function (data) {
+                    if (data.success) {
+                        $('#msg').text(data.msg);
+                        $('#btn2').show();
+                    }
+                    else {
+                        $('#msg').text(data.msg);
+                        $('#btn2').hide()
+                    }
+                }
+            })
+        })
+    })
+</script>
 {% endblock %}

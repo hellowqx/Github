@@ -30,7 +30,7 @@
                 <td>{{i.publishtime}}</td>
                 <td>{{i.count}}</td>
                 <td><a href="{% url 'user:article_update' i.id %}">修改文章</a> </td>
-                <td><a href="{% url 'user:article_del' i.id %}">删除文章</a> </td>
+                <td><a href="{% url 'user:article_del' i.id %}" onclick="return confirm('确认删除吗')">删除文章</a> </td>
             </tr>
               {% empty%}
                 <tr>

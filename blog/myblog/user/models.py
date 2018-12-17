@@ -36,3 +36,10 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Judge(models.Model):
+    content=models.CharField(max_length=255,null=True,blank=False)
+    article=models.ForeignKey(Article,on_delete=models.CASCADE)
+    publishtime=models.DateTimeField(auto_now_add=True)
+    user=models.ForeignKey(User,on_delete=models.CASCADE)

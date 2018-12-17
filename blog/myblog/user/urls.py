@@ -22,10 +22,15 @@ urlpatterns=[
     url(r'^article_show/(?P<a_id>\d+)/$',views.article_show,name='article_show'),
 
     url(r'^get_code/$',views.get_code,name='get_code'),
-
+    url(r'^checkname/$',views.checkname,name='checkname'),
+    url(r'^checkemail/$',views.checkemail,name='checkemail'),
+    #邮箱
+    url(r"^reg_email/$", views.reg_email, name="reg_email"),
+    url(r"^active/(?P<token>.*)/$", views.active, name="active"),
     url(r'^logout/$',views.logout,name='logout'),
     url(r'^showinfo/$',views.showinfo,name='showinfo'),
     url(r'^showlist/$',views.showlist,name='showlist'),
     url(r'^index/$',views.index,name='index'),
+    url(r'^test/$',views.test,name='test'),
     url(r'^$', views.index, name='index'),
 ]
